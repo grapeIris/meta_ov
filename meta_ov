@@ -1,73 +1,4 @@
-colors=c(
-"#3b7771"
-"#6fb2af"
-"#84b3b3"
-"#2b2568"
-"#3e3e76"
-"#806b8c"
-"#678fc9"
-"#3a9bda"
-"#abbfe1"
-"#6c2b1a"
-"#ad1b1c"
-"#bd6f64"
-"#872777"
-"#af166f"
-"#D87093"
-"#4169E1"
-"#F1BB72"
-"#F3B1A0"
-"#D6E7A3"
-)
 
-library(Seurat)
-library(ggplot2)
-library(clustree)
-library(cowplot)
-library(dplyr)
-
-## Data loading and QC
-## import  files from 6 data sets
-
-rownames(ov1)=ov1[,1]
-ov1=ov1[,-1]
-rownames(ov2)=ov2[,1]
-ov2=ov2[,-1]
-rownames(ov3)=ov3[,1]
-ov3=ov3[,-1]
-rownames(ov4)=ov4[,1]
-ov4=ov4[,-1]
-rownames(ov5)=ov5[,1]
-ov5=ov5[,-1]
-rownames(ov6)=ov6[,1]
-ov6=ov6[,-1]
-scRNA1 <- CreateSeuratobject(counts =ov1,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov1")
-scRNA2 <- CreateSeuratobject(counts =ov2,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov2")
-scRNA3 <- CreateSeuratobject(counts =ov3,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov3")
-scRNA4 <- CreateSeuratobject(counts =ov4,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov4")
-scRNA5<- CreateSeuratobject(counts =ov5,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov5")
-scRNA6<- CreateSeuratobject(counts =ov6,  
-                             min.cells = 3, #在不少于三个细胞中表达
-                             min.features = 200, #nFeature不少于200
-                             project = "ov6")
-sce.obj = merge(scRNA1,y=c(scRNA2,scRNA3,scRNA4,scRNA5,scRNA6),project = "OV")
-meta=sce.obj@meta.data
-save.image("ov_sc.Rdata")
 
 rm(ov1,ov2,ov3,ov4,ov5,ov6,scRNA1,scRNA2,scRNA3,scRNA4,scRNA5,scRNA6)
 
@@ -89,7 +20,7 @@ ggsave2("FigureS1A,C.pdf")
 ####
 nFeature_lower <- 600
 
-# Data normalization
+###Normalize and scale the data
 sce.obj <- subset(sce.obj, subset = nFeature_RNA > nFeature_lower)
 
 # Dimensionality reduction
