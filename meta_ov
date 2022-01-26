@@ -30,3 +30,43 @@ sce.obj= RunPCA(sce.obj, npcs = 20)
 ElbowPlot(seu.obj)
 
 sce.obj= RunUMAP(sce.obj, dims = 1:10)
+
+Fig 2B
+
+####geneset要去GSEA官网去下载，整理
+
+subcluster = c(3,5,7,15)
+sub <- subset(sce.all, idents = subcluster)
+df.data <- GetAssayData(object = sub, slot = "data")
+
+##data是normalized数据，count是原始数据，这里选择标准化的就行
+
+table(sub@meta.data$CCA_snn_res.0.8)
+group <- data.frame(umi = names(Idents(sub)), 
+      cluster = as.character(sub@meta.data$CCA_snn_res.0.8), 
+      stringsAsFactors = F)
+###
+  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18 
+  0   0   0 742   0 686   0 665   0   0   0   0   0   0   0 164   0   0   0 
+##data是normalized数据，count是原始数据，这里选择标准化的就行
+
+table(sub@meta.data$CCA_snn_res.0.8)
+ 15   3   5   7 
+164 742 686 665 
+gsvascore <- gsva(data.matrix(df.data), genelist, parallel.sz = 2)
+> gsvascore[1:4, 1:4]
+                                 AACTATAGAACA_1 AAGAGCGATCAT_1 GACGCCTGGCGC_1 AAACGTTCCCGT_1
+HALLMARK_TNFA_SIGNALING_VIA_NFKB     -0.2137329     0.26014836    -0.33093764    -0.01510876
+HALLMARK_HYPOXIA                     -0.3319224     0.07401125    -0.23909254     0.05659697
+HALLMARK_CHOLESTEROL_HOMEOSTASIS     -0.3293504     0.50311276     0.24574388    -0.02610687
+HALLMARK_MITOTIC_SPINDLE              0.1383315    -0.08595795    -0.05530312    -0.13177052
+clu <- HeatmapAnnotation(Cluster = df.group$cluster)
+Heatmap(as.matrix(gsvascore),
+cluster_rows = T,
+cluster_columns = T,
+show_column_names = F,
+top_annotation = clu,
+column_split = df.group$cluster,
+row_names_gp = gpar(fontsize = 8),
+row_names_max_width = max_text_width(rownames(gsvascore),
+gp = gpar(fontsize = 8)))
