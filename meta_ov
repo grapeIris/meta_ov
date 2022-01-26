@@ -30,6 +30,36 @@ sce.obj= RunPCA(sce.obj, npcs = 20)
 ElbowPlot(seu.obj)
 
 sce.obj= RunUMAP(sce.obj, dims = 1:10)
+
+Fif1.
+DimPlot(sce.obj, reduction = "umap", group.by = "CCA_snn_res.0.8",cols = c(colors),pt.size = 1,label=T,label.size =5)+ theme(panel.border = element_rect(colour="black",fill=NA,size =1),legend.position="bottom")
+
+genes_to_check = c(
+    'PTPRC',
+    'CD38','TNFRSF17','IGHG1','IGHG4',##plasmaB
+    "GZMB","IRF8",##NK
+    "CCR7", 'SELL' , 'TCF7',##NaiveT
+    'TPSAB1' , 'TPSB2', ##mast
+    'CD163', 'CD14', ##m
+    "PDPN",'FGF7','MME', ##fib
+    "EPCAM","KRT19","KRT8","KRT18", ##epi
+    'ACTA2','RBP1', 'PECAM1', 'VWF',##endo              
+     'CD3D', 'CD3E', 'CD8A', 
+    'CD79A', 'MS4A1')
+
+DotPlot(sce.all,features=genes_to_check, assay = 'RNA',
+        cols=c("white","forestgreen"),
+        group.by = "celltype")+
+    RotatedAxis()+
+    theme_test()+
+    theme(axis.text=element_text(size=10,face="bold"),
+          axis.title=element_blank(),
+          legend.position="bottom",
+          legend.text=element_text(size=10),
+          legend.title=element_text(size=10,face="bold"),
+          axis.text.x=element_text(angle = 90, hjust = 1, vjust = .5))+
+    theme(panel.border = element_rect(colour="black",fill=NA,size = 2))
+    
 Fig2.
 
 Fig 2A
