@@ -29,8 +29,160 @@ $ov6
 An object of class Seurat 
 33533 features across 1909 samples within 1 assay 
 Active assay: RNA (33533 features, 0 variable features)
-
-rm(ov1,ov2,ov3,ov4,ov5,ov6,scRNA1,scRNA2,scRNA3,scRNA4,scRNA5,scRNA6)
+> alldata.anchors <- FindIntegrationAnchors(object.list = sce.ll, dims = 1:30, 
++                                           reduction = "cca")
+Computing 2000 integration features
+Scaling features for provided objects
+  ++++++++++++++++++++++++++++++++++++++++++++++++++ 100% elapsed=01s  
+Finding all pairwise anchors
+                                                    0 % ~calculating  Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 2978 anchors
+Filtering anchors
+Retained 1822 anchors
+  ++++                                              7 % ~01m 40s      Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 2900 anchors
+Filtering anchors
+Retained 1973 anchors
+  +++++++                                            13% ~01m 13s      Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 2768 anchors
+Filtering anchors
+Retained 2470 anchors
+  ++++++++++                                        20% ~01m 05s      Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3225 anchors
+Filtering anchors
+Retained 1544 anchors
+  ++++++++++++++                                    27% ~56s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 2824 anchors
+Filtering anchors
+Retained 1936 anchors
+  +++++++++++++++++                                  33% ~50s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 2936 anchors
+Filtering anchors
+Retained 2198 anchors
+  ++++++++++++++++++++                              40% ~44s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 4282 anchors
+Filtering anchors
+Retained 1847 anchors
+  ++++++++++++++++++++++++                          47% ~45s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 4184 anchors
+Filtering anchors
+Retained 3062 anchors
+  +++++++++++++++++++++++++++                        53% ~45s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3840 anchors
+Filtering anchors
+Retained 2635 anchors
+  ++++++++++++++++++++++++++++++                    60% ~41s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 4037 anchors
+Filtering anchors
+Retained 1995 anchors
+  ++++++++++++++++++++++++++++++++++                67% ~36s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3914 anchors
+Filtering anchors
+Retained 1395 anchors
+  +++++++++++++++++++++++++++++++++++++              73% ~28s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3590 anchors
+Filtering anchors
+Retained 1846 anchors
+  ++++++++++++++++++++++++++++++++++++++++          80% ~21s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3415 anchors
+Filtering anchors
+Retained 1848 anchors
+  ++++++++++++++++++++++++++++++++++++++++++++      87% ~14s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 3877 anchors
+Filtering anchors
+Retained 2034 anchors
+  +++++++++++++++++++++++++++++++++++++++++++++++    93% ~07s          Running CCA
+Merging objects
+Finding neighborhoods
+Finding anchors
+Found 5753 anchors
+Filtering anchors
+Retained 2991 anchors
+  ++++++++++++++++++++++++++++++++++++++++++++++++++ 100% elapsed=01m 53s
+> sce.obj<- IntegrateData(anchorset = alldata.anchors, dims = 1:30, new.assay.name = "CCA")
+Merging dataset 2 into 5
+Extracting anchors for merged samples
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----------------------------------------
+**************************************************
+Integrating data
+Merging dataset 3 into 5 2
+Extracting anchors for merged samples
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----------------------------------------
+**************************************************
+Integrating data
+Merging dataset 4 into 6
+Extracting anchors for merged samples
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----------------------------------------
+**************************************************
+Integrating data
+Merging dataset 1 into 5 2 3
+Extracting anchors for merged samples
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----------------------------------------
+**************************************************
+Integrating data
+Merging dataset 6 4 into 5 2 3 1
+Extracting anchors for merged samples
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----------------------------------------
+**************************************************
+Integrating data
+Warning: Adding a command log without an assay associated with it
 
 #^MT，^HB, nCount, nRNA
 #1.
@@ -38,7 +190,7 @@ percent_mito=rownames(sce.obj)[grep("^MT-", rownames(sce.obj))]
 sce.obj=PercentageFeatureSet(sce.obj, "^MT-", col.name = "percent_mito")
 seu.obj <- PercentageFeatureSet(seu.obj, pattern = "^HBA|^HBB", col.name = "percent_hb")
 ##2.
-pbmc[["percent.mt"]] <- PercentageFeatureSet(object = pbmc, pattern = "^MT-")
+sce.obj[["percent.mt"]] <- PercentageFeatureSet(object = sce.obj, pattern = "^MT-")
 VlnPlot(object = sce.obj, features = 'pMT', group.by = "orig.ident", pt.size = 0)
 qc<- c("nFeature_RNA", "nCount_RNA", "percent_mito", "percent_hb")
 for (i in seq_along(qc)){
@@ -61,6 +213,7 @@ ElbowPlot(seu.obj)
 
 sce.obj= RunUMAP(sce.obj, dims = 1:10)
 
+rm(ov1,ov2,ov3,ov4,ov5,ov6,scRNA1,scRNA2,scRNA3,scRNA4,scRNA5,scRNA6)
 
 
 Fif1.
