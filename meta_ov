@@ -1,4 +1,34 @@
 
+> sce.ll
+$ov1
+An object of class Seurat 
+33533 features across 1102 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
+
+$ov2
+An object of class Seurat 
+33533 features across 1244 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
+
+$ov3
+An object of class Seurat 
+33533 features across 1071 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
+
+$ov4
+An object of class Seurat 
+33533 features across 1108 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
+
+$ov5
+An object of class Seurat 
+33533 features across 3451 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
+
+$ov6
+An object of class Seurat 
+33533 features across 1909 samples within 1 assay 
+Active assay: RNA (33533 features, 0 variable features)
 
 rm(ov1,ov2,ov3,ov4,ov5,ov6,scRNA1,scRNA2,scRNA3,scRNA4,scRNA5,scRNA6)
 
@@ -30,6 +60,8 @@ sce.obj= RunPCA(sce.obj, npcs = 20)
 ElbowPlot(seu.obj)
 
 sce.obj= RunUMAP(sce.obj, dims = 1:10)
+
+
 
 Fif1.
 DimPlot(sce.obj, reduction = "umap", group.by = "CCA_snn_res.0.8",cols = c(colors),pt.size = 1,label=T,label.size =5)+ theme(panel.border = element_rect(colour="black",fill=NA,size =1),legend.position="bottom")
