@@ -103,7 +103,6 @@ fpkmToTpm <- function(fpkm)
 {
     exp(log(fpkm) - log(sum(fpkm)) + log(1e6))
 }
-
 tpms <- apply(fpkm,2,fpkmToTpm)
 exp=tpms
 library(stringr)
@@ -112,15 +111,15 @@ table(rownames(exp) %in% mRNA_anno$Ensembl_ID)
 mRNA_exp = exp[rownames(exp) %in% mRNA_anno$Ensembl_ID,]
 tmp = data.frame(Ensembl_ID = rownames(exp))
 x = dplyr::inner_join(tmp,mRNA_anno,by = "Ensembl_ID")
-#inner_join不改变顺序，可以确认一下
+
 identical(tmp$Ensembl_ID,rownames(exp))
 table(!duplicated(x$Symbol))
 mRNA_exp = mRNA_exp[!duplicated(x$Symbol),]
 x = x[!duplicated(x$Symbol),]
 rownames(mRNA_exp) = x$Symbol
-mRNA_exp[1:4,1:4]   #这里的mRNA是所有样本521个样本的mRNA
+mRNA_exp[1:4,1:4]  
 mRNA_exp = na.omit(mRNA_exp)
-#同样办法拆出lncRNA:也是所有样本的（521个样本）
+
 lnc_exp = exp[rownames(exp) %in% lnc_anno$Ensembl_ID,]
 tmp = data.frame(Ensembl_ID = rownames(exp))
 x = dplyr::inner_join(tmp,lnc_anno,by = "Ensembl_ID")
