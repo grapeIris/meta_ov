@@ -30,6 +30,23 @@ sce.obj= RunPCA(sce.obj, npcs = 20)
 ElbowPlot(seu.obj)
 
 sce.obj= RunUMAP(sce.obj, dims = 1:10)
+Fig2.
+
+Fig 2A
+
+table(sce.all@meta.data$celltype)
+###
+      B   CD8+T    endo     epi    ESCs   fibro   Macro    mast    MSCs  NaiveT 
+    397     400     186    4015     664    2257     720      37     200     548 
+plasmaB unkown1 unkown2 
+    346      67      48 
+sub1<- subset(sce.all,celltype==c('fibro'))
+
+table(sub1@meta.data$CCA_snn_res.0.8)
+###
+  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18 
+  0   0   0 742   0 686   0 665   0   0   0   0   0   0   0 164   0   0   0 
+DimPlot(sub1,reduction = "umap",pt.size = 1, group.by = "CCA_snn_res.0.8",cols = c(color[c(4,6,8,16)]))
 
 Fig 2B
 
@@ -70,3 +87,52 @@ column_split = df.group$cluster,
 row_names_gp = gpar(fontsize = 8),
 row_names_max_width = max_text_width(rownames(gsvascore),
 gp = gpar(fontsize = 8)))
+
+
+##Fig 2C
+
+VlnPlot(sub_pbmc, features = "MMP11", pt.size = 0, ncol = 1,col=c("#2b2568","#806b8c","#3a9bda","#4169E1"))
++scale_x_discrete("")+
+theme(axis.text.x.bottom = element_blank(),panel.border = element_rect(colour="black",fill=NA,size = 1))
+
+##Fig3
+
+fpkm=read.table('TCGA-OV.htseq_fpkm .tsv.gz',header = T,row.names = 1)
+fpkm=2^fpkm-1
+fpkmToTpm <- function(fpkm)
+{
+    exp(log(fpkm) - log(sum(fpkm)) + log(1e6))
+}
+
+tpms <- apply(fpkm,2,fpkmToTpm)
+exp=tpms
+library(stringr)
+rownames(exp)=unlist(str_split(rownames(exp),"[.]",simplify=T))[,1]
+table(rownames(exp) %in% mRNA_anno$Ensembl_ID)
+mRNA_exp = exp[rownames(exp) %in% mRNA_anno$Ensembl_ID,]
+tmp = data.frame(Ensembl_ID = rownames(exp))
+x = dplyr::inner_join(tmp,mRNA_anno,by = "Ensembl_ID")
+#inner_join不改变顺序，可以确认一下
+identical(tmp$Ensembl_ID,rownames(exp))
+table(!duplicated(x$Symbol))
+mRNA_exp = mRNA_exp[!duplicated(x$Symbol),]
+x = x[!duplicated(x$Symbol),]
+rownames(mRNA_exp) = x$Symbol
+mRNA_exp[1:4,1:4]   #这里的mRNA是所有样本521个样本的mRNA
+mRNA_exp = na.omit(mRNA_exp)
+#同样办法拆出lncRNA:也是所有样本的（521个样本）
+lnc_exp = exp[rownames(exp) %in% lnc_anno$Ensembl_ID,]
+tmp = data.frame(Ensembl_ID = rownames(exp))
+x = dplyr::inner_join(tmp,lnc_anno,by = "Ensembl_ID")
+identical(tmp$Ensembl_ID,rownames(exp))
+table(!duplicated(x$Symbol))
+lnc_exp = lnc_exp[!duplicated(x$Symbol),]
+x = x[!duplicated(x$Symbol),]
+rownames(lnc_exp) = x$Symbol
+lnc_exp[1:4,1:4]
+lnc_exp = na.omit(lnc_exp)
+
+imm_exp=mRNA_exp[rownames(mRNA_exp) %in% imm$V1,]
+colnames(lnc_exp)=gsub('\\.','\\-',colnames(lnc_exp))
+
+
