@@ -348,5 +348,24 @@ lnc_exp = na.omit(lnc_exp)
 
 imm_exp=mRNA_exp[rownames(mRNA_exp) %in% imm$V1,]
 colnames(lnc_exp)=gsub('\\.','\\-',colnames(lnc_exp))
+box <- lapply(list(up=row.names(up)), function(ii) {
++   dd <- d[ii,]
++   dd$gene = rownames(dd)
++   d2 <- gather(dd, sample, expr, 1:39)
++   d2$stage <- phe[d2$sample,]$stage
++   pvalues <- ccd[dd$gene,]$adj.P.Val
++   pv <- data.frame(gene = d2$gene, pvalue = pvalues)
++   pv$sigcode <- cut(pv$pvalue, c(0, 0.001, 0.01, 0.05, 0.1, 1), 
++                     labels=c('***', '**', '*', '.', ' '))
++   ggplot(d2, aes(gene, expr, fill=stage,color=stage)) +  
++       geom_boxplot() +scale_color_manual(name= "stage", values = c("#2216C1", "#D62A03"))+scale_fill_manual(name= "stage", values = c("#8AB0DD", "#FCB3A2"))+
++       geom_dotplot(binaxis='y', stackdir='center', 
++                    binwidth = 0.1, position = position_dodge(0.75))+ 
++       geom_text(aes(gene, y=max(d2$expr) * 1.1, 
++                     label=pv$sigcode),
++                 data=pv, inherit.aes=F) + 
++       xlab(NULL)+ylab("Relative expression")+theme_classic()
++               
++ })
 
 
