@@ -369,3 +369,206 @@ box <- lapply(list(up=row.names(up)), function(ii) {
 + })
 
 
+
+
+
+
+
+
+
+
+
+
+
+celltype=data.frame(ClusterID=0:5,celltype='unkown')
+celltype$celltype=as.character(celltype$celltype)
+celltype[celltype$ClusterID %in% c(1),2]='myCAF' 
+celltype[celltype$ClusterID %in% c(0,2,3,4),2]='iCAF'  
+celltype[celltype$ClusterID %in% c(5),2]='apCAF' 
+for(i in 1:nrow(celltype)){pbmc@meta.data[which(pbmc@meta.data$CCA_snn_res.0.4 == celltype$ClusterID[i]),'celltype'] <- celltype$celltype[i]}
+table(pbmc@meta.data$celltype)
+annCol$celltype=pbmc@meta.data$celltype
+annCol$cluster=pbmc$CCA_snn_res.0.4
+annColors
+annColors[["cluster"]] <- c("0"="red","1"="black","2"="white","3"="green","4"="blue","5"="yellow")
+annCol$celltype=pbmc@meta.data$celltype
+annCol$cluster=pbmc@meta.data$CCA_snn_res.0.4
+annCol=annCol[order(annCol$celltype),]
+mat=GetAssayData(pbmc,slot = 'scale.data')
+name=rownames(annCol)
+mat=mat[,name]
+logFCfilter=0.5
+adjPvalFilter=0.05
+sel.clust = "CCA_snn_res.0.4"
+pbmc <- SetIdent(pbmc, value = sel.clust)
+pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$CCA_snn_res.0.4,
+                               only.pos =F,
+                               min.pct = 0.25,
+                               logfc.threshold = logFCfilter)
+library(dplyr)
+top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 4, wt = avg_logFC)
+mat=mat[top10$gene,name]
+library(ClassDiscovery) #用于外部聚类
+library(pheatmap) #用于绘制热图
+library(gplots) #用于丰富热图颜色
+
+
+
+
+
+R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R是自由软件，不带任何担保。
+在某些条件下你可以将其自由散布。
+用'license()'或'licence()'来看散布的详细条件。
+
+R是个合作计划，有许多人为之做出了贡献.
+用'contributors()'来看合作者的详细情况
+用'citation()'会告诉你如何在出版物中正确地引用R或R程序包。
+
+用'demo()'来看一些示范程序，用'help()'来阅读在线帮助文件，或
+用'help.start()'通过HTML浏览器来看帮助文件。
+用'q()'退出R.
+
+[Workspace loaded from D:/鐢熶俊鍒嗘瀽/sc_cervical/ov/fibo_rescale.Rdata]
+
+
+R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R是自由软件，不带任何担保。
+
+> View(celltype)
+> View(celltype)
+> celltype[celltype$ClusterID %in% c(5),2]='iCAF' 
+> for(i in 1:nrow(celltype)){pbmc@meta.data[which(pbmc@meta.data$CCA_snn_res.0.81== celltype$ClusterID[i]),'celltype'] <- celltype$celltype[i]}
+> annCol$celltype=pbmc@meta.data$celltype
+> pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$CCA_snn_res.0.81,
++                                only.pos =F,
++                                min.pct = 0.25,
++                                logfc.threshold = logFCfilter)
+Error in FindAllMarkers(object = pbmc, group.by = pbmc@meta.data$CCA_snn_res.0.81,  : 
+  没有"FindAllMarkers"这个函数
+> library(Seurat)
+> pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$CCA_snn_res.0.81,
++                                only.pos =F,
++                                min.pct = 0.25,
++                                logfc.threshold = logFCfilter)
+Calculating cluster iCAF
+Calculating cluster apCAF
+Calculating cluster myCAF
+Warning: No DE genes identified
+Warning: The following tests were not performed: 
+Warning: When testing iCAF versus all:
+	Cannot find the following identities in the object: iCAF
+Warning: When testing apCAF versus all:
+	Cannot find the following identities in the object: apCAF
+Warning: When testing myCAF versus all:
+	Cannot find the following identities in the object: myCAF
+> sel.clust = "CCA_snn_res.0.81"
+> pbmc <- SetIdent(pbmc, value = sel.clust)
+> pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$CCA_snn_res.0.81,
++                                only.pos =F,
++                                min.pct = 0.25,
++                                logfc.threshold = logFCfilter)
+Calculating cluster 3
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  
+Calculating cluster 5
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  
+Calculating cluster 7
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
+Calculating cluster 15
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  
+> sig.markers=pbmc.markers[(abs(as.numeric(as.vector(pbmc.markers$avg_logFC)))>logFCfilter & as.numeric(as.vector(pbmc.markers$p_val_adj))<adjPvalFilter),]
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 4, wt = avg_logFC)
+Error in pbmc.markers %>% group_by(cluster) %>% top_n(n = 4, wt = avg_logFC) : 
+  没有"%>%"这个函数
+> library(dplyr)
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 4, wt = avg_logFC)
+> library(ClassDiscovery) #用于外部聚类
+载入需要的程辑包：cluster
+载入需要的程辑包：oompaBase
+> library(pheatmap) #用于绘制热图
+> library(gplots) #用于丰富热图颜色
+> View(mat1)
+> View(mat1)
+> View(mat)
+> View(mat)
+> annCol=annCol[order(annCol$celltype),]
+> mat=GetAssayData(pbmc,slot = 'scale.data')
+> name=rownames(annCol)
+> mat=mat[,name]
+> mat=mat[top10$gene,name]
+> pheatmap(mat,
++          scale = "row",
++          color = bluered(64),
++          annotation_col = annCol,
++          annotation_colors = annColors,cluster_rows = F,cluster_cols = F,
++          show_rownames = T, show_colnames = F)
+> pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$celltype,
++                                only.pos =F,
++                                min.pct = 0.25,
++                                logfc.threshold = logFCfilter)
+Calculating cluster 3
+Calculating cluster 5
+Calculating cluster 7
+Calculating cluster 15
+Warning: No DE genes identified
+Warning: The following tests were not performed: 
+Warning: When testing 3 versus all:
+	Cannot find the following identities in the object: 3
+Warning: When testing 5 versus all:
+	Cannot find the following identities in the object: 5
+Warning: When testing 7 versus all:
+	Cannot find the following identities in the object: 7
+Warning: When testing 15 versus all:
+	Cannot find the following identities in the object: 15
+> Idents(pbmc)=pbmc$celltype
+> pbmc.markers <- FindAllMarkers(object = pbmc,group.by=pbmc@meta.data$celltype,
++                                only.pos =F,
++                                min.pct = 0.25,
++                                logfc.threshold = logFCfilter)
+Calculating cluster iCAF
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  
+Calculating cluster myCAF
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=01s  
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 4, wt = avg_logFC)
+> annCol=annCol[order(annCol$celltype),]
+> mat=GetAssayData(pbmc,slot = 'scale.data')
+> name=rownames(annCol)
+> mat=mat[top10$gene,name]
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_logFC)
+> annCol=annCol[order(annCol$celltype),]
+> mat=GetAssayData(pbmc,slot = 'scale.data')
+> name=rownames(annCol)
+> mat=mat[top10$gene,name]
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 15, wt = avg_logFC)
+> annCol=annCol[order(annCol$celltype),]
+> mat=GetAssayData(pbmc,slot = 'scale.data')
+> name=rownames(annCol)
+> mat=mat[top10$gene,name]
+> View(pbmc.markers)
+> View(pbmc.markers)
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 50, wt = avg_logFC)
+> annCol=annCol[order(annCol$celltype),]
+> mat=GetAssayData(pbmc,slot = 'scale.data')
+> name=rownames(annCol)
+> top10 <- pbmc.markers %>% group_by(cluster) %>% top_n(n = 25, wt = avg_logFC)
+> mat=mat[top10$gene,name]
+> pheatmap(mat,
++          scale = "row",
++          color = bluered(64),
++          annotation_col = annCol,
++          annotation_colors = annColors,cluster_rows = F,cluster_cols = F,
++          show_rownames = T, show_colnames = F)
+
+
+
+
+
+
+
+
